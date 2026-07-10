@@ -30,10 +30,10 @@ on:
           - all
         default: all
       sign-build:
-        description: 'Sign the build'
+        description: 'Sign the build (requires TAURI_SIGNING_* secrets). Use false on forks or for unsigned AppImage/DEB/RPM.'
         required: true
         type: boolean
-        default: true
+        default: false
       upload-artifacts:
         description: 'Upload build artifacts'
         required: true
@@ -198,13 +198,35 @@ jobs:
           echo "Copied llama-helper to frontend/src-tauri/binaries/"
           ls -la frontend/src-tauri/binaries/
 
+      - name: Prepare Tauri config (disable signing if no key or sign-build=false)
+        working-directory: frontend/src-tauri
+        run: |
+          # Ensure jq is available
+          if ! command -v jq &> /dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq jq
+          fi
+
+          SIGN_KEY="${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}"
+          SIGN_REQUESTED="${{ github.event.inputs.sign-build }}"
+
+          if [[ "$SIGN_REQUESTED" != "true" || -z "$SIGN_KEY" ]]; then
+            # Disable updater artifact creation so Tauri doesn't attempt to sign.
+            # This allows clean unsigned builds on forks (or when sign-build=false)
+            # even if the user accidentally leaves sign-build=true.
+            jq '.bundle.createUpdaterArtifacts = false' tauri.conf.json > tauri.conf.json.tmp
+            mv tauri.conf.json.tmp tauri.conf.json
+            echo "✅ createUpdaterArtifacts set to false (unsigned build)"
+          else
+            echo "ℹ️ Signing enabled (key present)"
+          fi
+
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Only inject signing key when explicitly requested.
-          # This allows forks and test builds (sign-build: false) to succeed
-          # without having the private key configured.
+          # When sign-build=false we pass empty to avoid decode errors on forks.
           TAURI_SIGNING_PRIVATE_KEY: ${{ github.event.inputs.sign-build == 'true' && secrets.TAURI_SIGNING_PRIVATE_KEY || '' }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ github.event.inputs.sign-build == 'true' && secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || '' }}
           # License validation RSA public key (embedded at build time)

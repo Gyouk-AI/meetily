@@ -6,9 +6,16 @@ This guide helps you build Meetily on Linux with **automatic GPU acceleration**.
 
 ## 🚀 Quick Start (Recommended for Beginners)
 
-If you're new to building on Linux, start here. These simple commands work for most users:
+If you're new to building on Linux, start here. These simple commands work for most users.
 
-### 1. Install Basic Dependencies
+**Easiest dependency installation (Fedora, Ubuntu, Arch etc.):**
+```bash
+# From the repository root
+bash scripts/install-linux-deps.sh
+```
+This auto-detects your package manager and installs the full set of libraries required by Tauri, audio capture, and AppImage bundling.
+
+### 1. Install Basic Dependencies (manual reference)
 
 ```bash
 # Ubuntu/Debian
@@ -21,6 +28,34 @@ sudo dnf install gcc-c++ cmake git
 # Arch Linux
 sudo pacman -S base-devel cmake git
 ```
+
+**Complete development + bundling dependencies (Tauri + WebKit + audio + AppImage support)**
+
+**Fedora / RHEL family (recommended for Fedora users):**
+```bash
+sudo dnf install -y \
+  webkit2gtk4.1-devel gtk3-devel \
+  libappindicator-gtk3-devel librsvg2-devel patchelf \
+  alsa-lib-devel pipewire-devel pulseaudio-libs-devel \
+  libX11-devel libXtst-devel libXrandr-devel openssl-devel \
+  fuse fuse-libs openblas-devel \
+  cmake gcc-c++ git
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt update && sudo apt install -y \
+  libwebkit2gtk-4.1-dev libgtk-3-dev \
+  libayatana-appindicator3-dev librsvg2-dev patchelf \
+  libasound2-dev libpipewire-0.3-dev libpulse-dev \
+  libx11-dev libxtst-dev libxrandr-dev libfuse2 libopenblas-dev \
+  build-essential cmake git
+```
+
+> **AppImage note for Fedora and others:** You may also need `fuse` / `fuse-libs` (or `libfuse2` on older systems).  
+> The build scripts set `NO_STRIP=true` to avoid stripping symbols from the AppImage.  
+> After a successful `./build-gpu.sh` the universal package is at:
+> `src-tauri/target/release/bundle/appimage/Meetily_<version>_amd64.AppImage` (relative to the frontend dir). 
 
 ### 2. Build and Run
 
@@ -182,6 +217,24 @@ hipcc --version     # Shows ROCm version
 ---
 
 ## 🎯 Advanced Usage
+
+### Running the produced AppImage (universal Linux package)
+
+After a successful build (or after downloading a release `.AppImage`):
+
+```bash
+chmod +x Meetily_*.AppImage
+./Meetily_*.AppImage
+```
+
+On some Fedora / immutable / containerized systems you may need:
+
+```bash
+sudo dnf install fuse fuse-libs   # or libfuse2 on older releases
+# or for AppImageLauncher / desktop integration: appimaged (optional)
+```
+
+The AppImage bundles most libraries and is the easiest "one file that works on many distros" option.
 
 ### Manual Feature Override
 

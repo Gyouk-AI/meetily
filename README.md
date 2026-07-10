@@ -12,7 +12,7 @@
 </a>
  <a href="https://github.com/Zackriya-Solutions/meeting-minutes/releases"> <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/zackriya-solutions/meeting-minutes/total?style=plastic"> </a>
     <a href="https://github.com/Zackriya-Solutions/meeting-minutes/releases"><img src="https://img.shields.io/badge/License-MIT-blue" alt="License"></a>
-    <a href="https://github.com/Zackriya-Solutions/meeting-minutes/releases"><img src="https://img.shields.io/badge/Supported_OS-macOS,_Windows-white" alt="Supported OS"></a>
+    <a href="https://github.com/Zackriya-Solutions/meeting-minutes/releases"><img src="https://img.shields.io/badge/Supported_OS-macOS,_Windows,_Linux-white" alt="Supported OS"></a>
     <a href="https://github.com/Zackriya-Solutions/meeting-minutes/releases"><img alt="GitHub Tag" src="https://img.shields.io/github/v/tag/zackriya-solutions/meeting-minutes?include_prereleases&color=yellow">
 </a>
     <br>
@@ -117,12 +117,26 @@ Whether you're a defense consultant, enterprise executive, legal professional, o
 
 ### 🐧 **Linux**
 
-Build from source following our detailed guides:
+**Recommended: Universal AppImage (works on Fedora, Ubuntu, Arch, and most glibc distros)**
+
+1. Download the `*.AppImage` from [Releases](https://github.com/Zackriya-Solutions/meeting-minutes/releases/latest)
+2. Make it executable and run:
+   ```bash
+   chmod +x Meetily_*.AppImage
+   ./Meetily_*.AppImage
+   ```
+   (Some systems may also need `sudo apt install fuse libfuse2` or the equivalent `dnf install fuse` / `dnf install fuse-libs`.)
+
+**Alternative: Native packages**
+- `.deb` for Debian / Ubuntu / Pop!_OS / Mint family
+- `.rpm` may be produced on request or via manual workflow
+
+Or build from source (see detailed guides):
 
 - [Building on Linux](docs/building_in_linux.md)
 - [General Build Instructions](docs/BUILDING.md)
 
-**Quick start:**
+**Build quick start (after installing system dependencies):**
 
 ```bash
 git clone https://github.com/Zackriya-Solutions/meeting-minutes

@@ -29,6 +29,52 @@ sudo dnf install gcc-c++ cmake git
 sudo pacman -S base-devel cmake git
 ```
 
+**Full Tauri + audio + packaging dependencies (required for `tauri build` and AppImage/deb/rpm bundles):**
+
+**Fedora / RHEL / Rocky / AlmaLinux:**
+```bash
+sudo dnf install -y \
+  webkit2gtk4.1-devel \
+  gtk3-devel \
+  libappindicator-gtk3-devel \
+  librsvg2-devel \
+  patchelf \
+  alsa-lib-devel \
+  pipewire-devel \
+  pulseaudio-libs-devel \
+  libX11-devel \
+  libXtst-devel \
+  libXrandr-devel \
+  openssl-devel \
+  fuse fuse-libs \
+  openblas-devel \
+  cmake gcc-c++ git
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt update
+sudo apt install -y \
+  libwebkit2gtk-4.1-dev \
+  libgtk-3-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev \
+  patchelf \
+  libasound2-dev \
+  libpipewire-0.3-dev \
+  libpulse-dev \
+  libx11-dev \
+  libxtst-dev \
+  libxrandr-dev \
+  libfuse2 \
+  libopenblas-dev \
+  build-essential cmake git
+```
+
+> After installing, the `./build-gpu.sh` (or `pnpm tauri:build`) scripts will produce an AppImage at
+> `frontend/src-tauri/target/release/bundle/appimage/Meetily_*.AppImage` (or the `debug` variant).
+> Run it with `chmod +x ... && ./...AppImage`. 
+
 #### 2. Build and Run
 
 ```bash

@@ -614,8 +614,11 @@ jobs:
       - name: Remove libwayland-client.so from AppImage
         if: contains(inputs.platform, 'ubuntu')
         run: |
-          # Find the AppImage file
-          APPIMAGE_PATH=$(find target/${{ steps.build-profile.outputs.profile }}/bundle/appimage -name "*.AppImage" | head -1)
+          # Find the AppImage file.
+          # When building for the host target (typical for Linux matrix entries that only pass --bundles),
+          # bundles land under target/<profile>/bundle. When an explicit --target is used they go under
+          # target/<triple>/<profile>/bundle. Try the explicit target first, then fall back.
+          APPIMAGE_PATH=$(find target/${{ inputs.target }}/${{ steps.build-profile.outputs.profile }}/bundle/appimage target/${{ steps.build-profile.outputs.profile }}/bundle/appimage -name "*.AppImage" 2>/dev/null | head -1)
 
           if [ -n "$APPIMAGE_PATH" ]; then
             echo "Processing AppImage: $APPIMAGE_PATH"
@@ -662,6 +665,9 @@ jobs:
         with:
           name: ${{ inputs.asset-prefix }}-${{ inputs.platform }}-${{ inputs.target }}
           path: |
+            target/${{ inputs.target }}/${{ steps.build-profile.outputs.profile }}/bundle/deb/*.deb
+            target/${{ inputs.target }}/${{ steps.build-profile.outputs.profile }}/bundle/appimage/*.AppImage
+            target/${{ inputs.target }}/${{ steps.build-profile.outputs.profile }}/bundle/rpm/*.rpm
             target/${{ steps.build-profile.outputs.profile }}/bundle/deb/*.deb
             target/${{ steps.build-profile.outputs.profile }}/bundle/appimage/*.AppImage
             target/${{ steps.build-profile.outputs.profile }}/bundle/rpm/*.rpm

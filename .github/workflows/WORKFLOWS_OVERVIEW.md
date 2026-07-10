@@ -136,7 +136,7 @@ This document provides a quick overview of all available CI/CD workflows in this
 - Creates GitHub Release (draft)
 - Version tags from `tauri.conf.json`
 - Uploads release assets
-- **macOS and Windows only** (Linux excluded from production releases)
+- **All platforms including Linux** (AppImage for universal use + .deb)
 - Auto-generates `latest.json` for Tauri updater
 - **Auto-increment versioning**: If tag exists, auto-increments (e.g., `0.1.1` -> `0.1.1.1` -> `0.1.1.2`, up to `.100`)
 
@@ -151,7 +151,8 @@ This document provides a quick overview of all available CI/CD workflows in this
 - GitHub Release (draft)
 - macOS: DMG installer, app.tar.gz (updater), .sig
 - Windows: MSI installer (signed), NSIS installer (signed), .sig files
-- Updater manifest: latest.json
+- Linux: .AppImage (universal, runs on Fedora/Arch/Ubuntu etc.), .deb
+- Updater manifest: latest.json (includes Linux entries)
 - Release notes auto-generated
 
 **Version Behavior:**
@@ -160,7 +161,7 @@ This document provides a quick overview of all available CI/CD workflows in this
 - If `v0.1.1.1` exists: creates `v0.1.1.2`
 - Maximum: `v0.1.1.100` (then update `tauri.conf.json`)
 
-**Note:** Linux builds are not included in releases. Use `build-linux.yml` for Linux testing.
+**Note:** Linux is now part of automated releases. The standalone `build-linux.yml` can still be used for ad-hoc or debug Linux builds (more bundle choices, verification steps).
 
 ---
 
@@ -212,9 +213,9 @@ This document provides a quick overview of all available CI/CD workflows in this
 - Optional signing
 
 ### "I need to test Linux packages..."
-- **Use `build-linux.yml`** (manual dispatch)
-- Choose Ubuntu version
-- Choose bundle types
+- **Use `build-linux.yml`** (manual dispatch) for extra control / verification
+- Linux builds are also included automatically in `build-test.yml`, `build-devtest.yml`, and `release.yml`
+- Choose Ubuntu version / bundles when using the dedicated workflow
 
 ### "I need signed builds for all platforms..."
 - **Use `build-test.yml`** (manual dispatch)
@@ -225,8 +226,8 @@ This document provides a quick overview of all available CI/CD workflows in this
 ### "I'm ready to release..."
 - **Use `release.yml`** (manual dispatch)
 - Creates GitHub Release
-- All platforms, fully signed
-- Production-ready artifacts
+- All platforms (macOS + Windows + Linux AppImage/.deb), fully signed where applicable
+- Production-ready artifacts (AppImage is the universal Linux option)
 
 ---
 
@@ -256,7 +257,7 @@ Standalone (don't use build.yml):
 | `build-windows.yml` | Windows | Optional | Medium | 30 days | Windows dev |
 | `build-linux.yml` | Linux | Optional | Medium | 30 days | Linux dev |
 | `build-test.yml` | All | ON | Slow | 30 days | Pre-release |
-| `release.yml` | macOS + Windows | REQUIRED | Slow | Permanent | Release |
+| `release.yml` | macOS + Windows + Linux | REQUIRED | Slow | Permanent | Release |
 
 ---
 
